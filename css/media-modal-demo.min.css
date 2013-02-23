@@ -1,3 +1,4 @@
-#wrap{width:100%}#open-media-modal{margin:10px}#attachment-details{border:1px solid #dfdfdf;border-radius:3px;padding:0 10px}#attachment-details div{width:33.3333333333%}
-#attachment-details label{font-weight:700}#attachment-details input,#attachment-details textarea{font-weight:normal}#attachment-details textarea{width:100%;height:300px}
-.attachments-browser .media-toolbar,.attachments-browser .attachments,.attachments-browser .uploader-inline{right:0}.media-sidebar{display:none}
+#wrap{width:100%}#settings_page_media-modal-demo .open-media-button{margin:10px}.attachment-fieldset{border:1px solid #dfdfdf;border-radius:3px;padding:0 10px;margin-bottom:30px}
+.attachment-fieldset div{width:33.3333333333%}.attachment-fieldset label{font-weight:700}.attachment-fieldset input,.attachment-fieldset textarea{font-weight:normal}
+.attachment-fieldset textarea{width:100%;height:300px}.no-sidebar .attachments-browser .media-toolbar,.no-sidebar .attachments-browser .attachments,.no-sidebar .attachments-browser .uploader-inline{right:0}
+.no-sidebar .media-sidebar{display:none}
