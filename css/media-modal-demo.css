@@ -31,15 +31,33 @@
 	height: 300px;
 }
 
+#attachment-details-tmpl {
+	display: none;
+}
+
 /**
  * Hide Sidebar
  */
-.no-sidebar .attachments-browser .media-toolbar,
-.no-sidebar .attachments-browser .attachments,
-.no-sidebar .attachments-browser .uploader-inline {
+.media-modal.no-sidebar .attachments-browser .media-toolbar,
+.media-modal.no-sidebar .attachments-browser .attachments,
+.media-modal.no-sidebar .attachments-browser .uploader-inline {
 	right: 0;
 }
 
-.no-sidebar .media-sidebar {
+.media-modal.no-sidebar .media-sidebar {
 	display: none;
+}
+
+.media-modal.smaller {
+	top:    100px;
+	right:  350px;
+	bottom: 100px;
+	left:   350px;
+}
+
+.media-modal.smaller {
+	top:    10%;
+	right:  15%;
+	bottom: 10%;
+	left:   15%;
 }

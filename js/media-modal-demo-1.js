@@ -25,8 +25,7 @@
 				}
 			} );
 
-
-			this.frame.on( 'ready', function( t, r) {
+			this.frame.on( 'ready', function() {
 				$( '.media-modal' ).addClass( 'no-sidebar' );
 			} );
 

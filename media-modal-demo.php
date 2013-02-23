@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Media Modal Demo
- * Version: 0.2
+ * Version: 0.3
  * Description: Adds an options page, where the new Media Modal can be used to get attachment details
  * Author: Dominik Schilling
  * Author URI: http://wphelper.de/
@@ -41,12 +41,26 @@ if ( ! class_exists( 'WP' ) ) {
 final class Media_Modal_Demo {
 	/**
 	 * Saves the menu page slug
+	 *
+	 * @since 0.1.0
 	 * @var string
 	 */
 	private static $page;
 
-	private static $demo_count = 3;
+	/**
+	 * Number of demos.
+	 *
+	 * @since 0.2.0
+	 * @var int
+	 */
+	private static $demo_count = 4;
 
+	/**
+	 * The current demo.
+	 *
+	 * @since 0.2.0
+	 * @var int
+	 */
 	private static $current_demo;
 
 	/**
@@ -150,6 +164,11 @@ final class Media_Modal_Demo {
 		<?php
 	}
 
+	/**
+	 * Calls the render methods.
+	 *
+	 * @since 0.2.0
+	 */
 	private static function render_demo_page() {
 		switch ( self::$current_demo ) {
 			case 1:
@@ -161,9 +180,17 @@ final class Media_Modal_Demo {
 			case 3:
 				self::render_demo_page_three();
 				break;
+			case 4:
+				self::render_demo_page_fourth();
+				break;
 		}
 	}
 
+	/**
+	 * Renders the first demo.
+	 *
+	 * @since 0.2.0
+	 */
 	private static function render_demo_page_one() {
 		?>
 		<input type="button" class="button open-media-button" id="open-media-lib" value="Open Media Library" data-title="Select An Image" data-button-text="Select" />
@@ -180,7 +207,7 @@ final class Media_Modal_Demo {
 			</div>
 
 			<div class="alignleft">
-				<p><strong>Image:<br/><img id="attachment-src" /></p>
+				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
 			</div>
 
 			<div class="alignleft">
@@ -190,6 +217,11 @@ final class Media_Modal_Demo {
 		<?php
 	}
 
+	/**
+	 * Renders the second demo.
+	 *
+	 * @since 0.2.0
+	 */
 	private static function render_demo_page_two() {
 		?>
 		<input type="button" class="button open-media-button" id="open-media-editor" value="Open Media Editor" />
@@ -231,6 +263,11 @@ final class Media_Modal_Demo {
 		<?php
 	}
 
+	/**
+	 * Filters media view strings. Used for the the second demo.
+	 *
+	 * @since 0.2.0
+	 */
 	public static function filter_media_view_strings( $strings ) {
 		$strings[ 'insertMediaTitle' ] = 'Select An Image';
 		$strings[ 'insertIntoPost' ] = 'Select';
@@ -238,14 +275,78 @@ final class Media_Modal_Demo {
 		return $strings;
 	}
 
+	/**
+	 * Filters media view settings. Used for the the second demo.
+	 *
+	 * @since 0.2.0
+	 */
 	public static function filter_media_view_settings( $settings ) {
 		$settings[ 'mimeTypes' ] = array( 'image' => $settings[ 'mimeTypes' ][ 'image'] );
 
 		return $settings;
 	}
 
+	/**
+	 * Renders the third demo.
+	 *
+	 * @since 0.2.0
+	 */
 	private static function render_demo_page_three() {
 		?>
+		<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
+
+		<fieldset id="attachment-details" class="attachment-fieldset">
+			<legend>Attachment Details</legend>
+
+			<div class="alignleft">
+				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
+				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
+				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
+				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
+				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
+				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
+			</div>
+
+			<div class="alignleft">
+				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
+			</div>
+
+			<div class="alignleft">
+				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
+			</div>
+		</fieldset>
+		<?php
+	}
+
+	/**
+	 * Renders the fourth demo.
+	 *
+	 * @since 0.3.0
+	 */
+	private static function render_demo_page_fourth() {
+		?>
+		<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
+
+		<fieldset id="attachment-details-tmpl" class="attachment-fieldset">
+			<legend>Attachment Details</legend>
+
+			<div class="alignleft">
+				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
+				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
+				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
+				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
+				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
+				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
+			</div>
+
+			<div class="alignleft">
+				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
+			</div>
+
+			<div class="alignleft">
+				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
+			</div>
+		</fieldset>
 		<?php
 	}
 }
