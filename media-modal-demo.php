@@ -325,7 +325,10 @@ final class Media_Modal_Demo {
 	 */
 	private static function render_demo_page_fourth() {
 		?>
-		<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
+		<p>
+			<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
+			<span class="description">Choose one or more images.</span>
+		</p>
 
 		<fieldset id="attachment-details-tmpl" class="attachment-fieldset">
 			<legend>Attachment Details</legend>
