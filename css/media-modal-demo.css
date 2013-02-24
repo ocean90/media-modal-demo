@@ -38,24 +38,24 @@
 /**
  * Hide Sidebar
  */
-.media-modal.no-sidebar .attachments-browser .media-toolbar,
-.media-modal.no-sidebar .attachments-browser .attachments,
-.media-modal.no-sidebar .attachments-browser .uploader-inline {
+.no-sidebar .attachments-browser .media-toolbar,
+.no-sidebar .attachments-browser .attachments,
+.no-sidebar .attachments-browser .uploader-inline {
 	right: 0;
 }
 
-.media-modal.no-sidebar .media-sidebar {
+.no-sidebar .media-sidebar {
 	display: none;
 }
 
-.media-modal.smaller {
+.smaller {
 	top:    100px;
 	right:  350px;
 	bottom: 100px;
 	left:   350px;
 }
 
-.media-modal.smaller {
+.smaller {
 	top:    10%;
 	right:  15%;
 	bottom: 10%;

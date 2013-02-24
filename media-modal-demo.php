@@ -53,7 +53,7 @@ final class Media_Modal_Demo {
 	 * @since 0.2.0
 	 * @var int
 	 */
-	private static $demo_count = 4;
+	private static $demo_count = 5;
 
 	/**
 	 * The current demo.
@@ -97,6 +97,8 @@ final class Media_Modal_Demo {
 
 		add_action( 'admin_print_scripts-' . self::$page, array( __CLASS__, 'enqueue_scripts' ) );
 		add_action( 'admin_print_styles-' . self::$page, array( __CLASS__, 'enqueue_styles' ) );
+
+		add_action( 'print_media_templates', array( __CLASS__, 'print_media_templates' ) );
 	}
 
 	/**
@@ -181,6 +183,7 @@ final class Media_Modal_Demo {
 				self::render_demo_page_three();
 				break;
 			case 4:
+			case 5:
 				self::render_demo_page_fourth();
 				break;
 		}
@@ -319,7 +322,7 @@ final class Media_Modal_Demo {
 	}
 
 	/**
-	 * Renders the fourth demo.
+	 * Renders the fourth and fifth demo.
 	 *
 	 * @since 0.3.0
 	 */
@@ -351,6 +354,14 @@ final class Media_Modal_Demo {
 			</div>
 		</fieldset>
 		<?php
+	}
+
+	public static function print_media_templates() {
+	?>
+		<script type="text/html" id="tmpl-hello-world">
+			<strong>Hello World</strong>
+		</script>
+	<?php
 	}
 }
 
