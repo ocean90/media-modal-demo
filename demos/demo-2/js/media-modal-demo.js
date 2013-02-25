@@ -19,9 +19,10 @@ var ds = ds || {};
 			e.preventDefault();
 
 			wp.media.editor.send.attachment = media.handleMediaAttachment;
-            wp.media.editor.remove = media.closeMediaDialog;
+			wp.media.editor.remove = media.closeMediaDialog;
 
-            wp.media.editor.open();
+			// An unique ID
+			wp.media.editor.open( 'ds-editor' );
 		},
 
 		handleMediaAttachment: function( props, attachment ) {
