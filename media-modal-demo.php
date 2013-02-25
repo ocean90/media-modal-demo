@@ -1,12 +1,11 @@
 <?php
 /**
  * Plugin Name: Media Modal Demo
- * Version: 0.3
+ * Version: 1.0
  * Description: Adds an options page, where the new Media Modal can be used to get attachment details
  * Author: Dominik Schilling
  * Author URI: http://wphelper.de/
  * Plugin URI: http://wpgrafie.de/
- *
  *
  * License: GPLv2 or later
  *
@@ -27,7 +26,6 @@
  *	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 /**
  * Don't call this file directly.
  */
@@ -36,334 +34,253 @@ if ( ! class_exists( 'WP' ) ) {
 }
 
 /**
- * The class will demonstrate the media modal.
+ * The base class.
  */
-final class Media_Modal_Demo {
+class Media_Modal_Demo {
 	/**
-	 * Saves the menu page slug
+	 * Stores the class instance.
 	 *
-	 * @since 0.1.0
+	 * @var Media_Modal_Demo
+	 */
+	private static $instance = null;
+
+	/**
+	 * Stores the current demo page number.
+	 *
+	 * @var integer
+	 */
+	private $current_demo_page = 1;
+
+	/**
+	 * Stores the class instance of the current demo
+	 *
+	 * @var Media_Modal_Demo_Page_Abstract
+	 */
+	private $demo_page_instance = null;
+
+	/**
+	 * Stores the hook suffix of the screen.
+	 *
 	 * @var string
 	 */
-	private static $page;
+	private $screen_id = '';
 
 	/**
-	 * Number of demos.
+	 * Stores the classes which will be autoloaded.
 	 *
-	 * @since 0.2.0
-	 * @var int
+	 * Class name => path to class, relative to __FILE__
+	 *
+	 * @var array
 	 */
-	private static $demo_count = 5;
+	public static $demo_classes = array(
+		'Media_Modal_Demo_Page_Abstract' => 'demos',
+		'Media_Modal_Demo_Page_1'        => 'demos/demo-1',
+		'Media_Modal_Demo_Page_2'        => 'demos/demo-2',
+		'Media_Modal_Demo_Page_3'        => 'demos/demo-3',
+		'Media_Modal_Demo_Page_4'        => 'demos/demo-4',
+		'Media_Modal_Demo_Page_5'        => 'demos/demo-5',
+	);
 
 	/**
-	 * The current demo.
+	 * Returns the instance of this class.
 	 *
-	 * @since 0.2.0
-	 * @var int
-	 */
-	private static $current_demo;
-
-	/**
-	 * Init.
+	 * It's a singleton class.
 	 *
-	 * @since 0.1.0
+	 * @return Media_Modal_Demo The instance
 	 */
-	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
+	public static function get_instance() {
+		if ( ! self::$instance )
+			self::$instance = new self;
 
-		self::$current_demo = ! empty( $_GET[ 'demo' ] ) ? (int) $_GET[ 'demo' ] : 1;
-
-		switch ( self::$current_demo ) {
-			case 2:
-				add_filter( 'media_view_strings', array( __CLASS__, 'filter_media_view_strings' ) );
-				add_filter( 'media_view_settings', array( __CLASS__, 'filter_media_view_settings' ) );
-				break;
-		}
+		return self::$instance;
 	}
 
 	/**
-	 * Adds an option page and registers style/script enqueue actions.
+	 * Initialises the plugin.
 	 *
-	 * @since 0.1.0
+	 * Returns false if not in admin. Sets the spl_autoload_register
+	 * callback.
 	 */
-	public static function add_options_page() {
-		self::$page = add_options_page(
+	public function init_plugin() {
+		if ( ! is_admin() )
+			return false;
+
+		spl_autoload_register( 'Media_Modal_Demo::autoloader' );
+
+		$this->set_current_demo_page_number();
+
+		$this->set_demo_page_instance();
+
+		$this->init_hooks();
+	}
+
+	/**
+	 * Sets the current demo page number either by argument
+	 * or by the value of $_GET[ 'demo' ].
+	 *
+	 * @param integer $page The demo page number
+	 */
+	public function set_current_demo_page_number( $page = null ) {
+		if ( ! empty( $page ) )
+			$this->current_demo_page_number = $page;
+		else
+			$this->current_demo_page_number = ! empty( $_GET[ 'demo' ] ) ? (int) $_GET[ 'demo' ] : 1;
+	}
+
+	/**
+	 * Returns the current demo page number.
+	 *
+	 * @return integer The demo page number
+	 */
+	public function get_current_demo_page_number() {
+		return $this->current_demo_page_number;
+	}
+
+	/**
+	 * Sets the instance of the current demo page class. Either
+	 * by argument or $current_demo_page.
+	 * Dies if class doesn't exist.
+	 *
+	 * @param string $class A custom class name
+	 */
+	public function set_demo_page_instance( $class = null ) {
+		if ( empty( $class ) ) {
+			$class = sprintf(
+				'Media_Modal_Demo_Page_%d',
+				$this->current_demo_page_number
+			);
+		}
+
+		if ( class_exists( $class ) )
+			$this->demo_page_instance = new $class;
+		else
+			wp_die( "Sorry, but this demo doesn't exist!" );
+	}
+
+	/**
+	 * Returns the instance of the current demo page class.
+	 *
+	 * @return Media_Modal_Demo_Page_Abstract The instance of the class
+	 */
+	public function get_demo_page_instance() {
+		return $this->demo_page_instance;
+	}
+
+	/**
+	 * Initialises the WP actions.
+	 *  - admin_menu
+	 *  - admin_print_scripts
+	 *  - admin_print_styles
+	 *
+	 * Initialises also the hooks of the demo page class.
+	 */
+	private function init_hooks() {
+		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+
+		add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+
+		$this->demo_page_instance->init_hooks();
+	}
+
+	/**
+	 * Adds an options pages.
+	 */
+	public function add_options_page() {
+		$this->screen_id = add_options_page(
 			'Media Modal Demo',
 			'Media Modal Demo',
 			'manage_options',
 			'media-modal-demo',
-			array( __CLASS__, 'render_page' )
+			array( $this, 'render_page' )
 		);
-
-		add_action( 'admin_print_scripts-' . self::$page, array( __CLASS__, 'enqueue_scripts' ) );
-		add_action( 'admin_print_styles-' . self::$page, array( __CLASS__, 'enqueue_styles' ) );
-
-		add_action( 'print_media_templates', array( __CLASS__, 'print_media_templates' ) );
 	}
 
 	/**
-	 * Adds script to queue.
+	 * Enqueues the scripts and calls wp_enqueue_media().
 	 *
-	 * @since 0.1.0
+	 * Calls also the enqueue method of the demo page class.
 	 */
-	public static function enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$current_demo = self::$current_demo;
-
-		wp_enqueue_script(
-			'media-modal-demo-' . $current_demo,
-			plugins_url( "js/media-modal-demo-$current_demo$suffix.js", __FILE__ ),
-			array( 'media-views' ),
-			'22022013'
-		);
+	public function enqueue_scripts() {
+		if ( ! isset( get_current_screen()->id ) || get_current_screen()->id != $this->screen_id )
+			return;
 
 		wp_enqueue_media();
+
+		$this->demo_page_instance->enqueue_scripts();
 	}
 
 	/**
-	 * Adds styles to queue.
+	 * Enqueues the styles.
 	 *
-	 * @since 0.1.0
+	 * Calls also the enqueue method of the demo page class.
 	 */
-	public static function enqueue_styles() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+	public function enqueue_styles() {
+		if ( ! isset( get_current_screen()->id ) || get_current_screen()->id != $this->screen_id )
+			return;
 
 		wp_enqueue_style(
 			'media-modal-demo',
-			plugins_url( "css/media-modal-demo$suffix.css", __FILE__ ),
-			array( 'media-views' ),
-			'22022013'
+			plugins_url( 'css/media-modal-demo.css', __FILE__ ),
+			array( 'media-views' )
 		);
+
+		$this->demo_page_instance->enqueue_styles();
 	}
 
 	/**
-	 * Renders the options page.
+	 * Renders the page.
 	 *
-	 * @since 0.1.0
+	 * Calls also the methods of the demo page class.
 	 */
-	public static function render_page() {
+	public function render_page() {
 		?>
-		<div class="wrap" id="<?php echo esc_attr( self::$page ); ?>">
+		<div id="media-modal-demo" class="wrap">
 			<h2>Media Modal Demo</h2>
 
 			<h3 class="nav-tab-wrapper">
 				<?php
-				for( $i = 1; $i <= self::$demo_count; $i++ ) {
+				$max = count( self::$demo_classes ) - 1; // Exclude the abstract class
+				for( $i = 1; $i <= $max; $i++ ) {
 					printf(
 						'<a href="%s" class="nav-tab%s">%s</a>',
 						esc_url( add_query_arg( 'demo', $i ) ),
-						self::$current_demo == $i ? ' nav-tab-active' : '',
+						$this->current_demo_page_number == $i ? ' nav-tab-active' : '',
 						"Demo $i"
 					);
 				}
 				?>
 			</h3>
 
-			<div>
-				<?php self::render_demo_page(); ?>
+			<div id="media-modal-demo-description">
+				<?php $this->demo_page_instance->print_description(); ?>
+			</div>
+
+			<div id="media-modal-demo-content">
+				<?php $this->demo_page_instance->render_content(); ?>
 			</div>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Calls the render methods.
+	 * The callback function for the autoloader.
 	 *
-	 * @since 0.2.0
+	 * @param  string $class The class name
 	 */
-	private static function render_demo_page() {
-		switch ( self::$current_demo ) {
-			case 1:
-				self::render_demo_page_one();
-				break;
-			case 2:
-				self::render_demo_page_two();
-				break;
-			case 3:
-				self::render_demo_page_three();
-				break;
-			case 4:
-			case 5:
-				self::render_demo_page_fourth();
-				break;
+	public static function autoloader( $class ) {
+		if ( in_array( $class, array_keys( self::$demo_classes ) ) ) {
+			require_once(
+				sprintf(
+					'%s/%s/class-%s.php',
+					dirname( __FILE__ ),
+					self::$demo_classes[ $class ],
+					strtolower( str_replace( '_', '-', $class ) )
+				)
+			);
 		}
-	}
-
-	/**
-	 * Renders the first demo.
-	 *
-	 * @since 0.2.0
-	 */
-	private static function render_demo_page_one() {
-		?>
-		<input type="button" class="button open-media-button" id="open-media-lib" value="Open Media Library" data-title="Select An Image" data-button-text="Select" />
-		<fieldset id="attachment-details" class="attachment-fieldset">
-			<legend>Attachment Details</legend>
-
-			<div class="alignleft">
-				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
-				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
-				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
-				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
-				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
-				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
-			</div>
-
-			<div class="alignleft">
-				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
-			</div>
-
-			<div class="alignleft">
-				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
-			</div>
-		</fieldset>
-		<?php
-	}
-
-	/**
-	 * Renders the second demo.
-	 *
-	 * @since 0.2.0
-	 */
-	private static function render_demo_page_two() {
-		?>
-		<input type="button" class="button open-media-button" id="open-media-editor" value="Open Media Editor" />
-		<fieldset id="attachment-details" class="attachment-fieldset">
-			<legend>Attachment Details</legend>
-
-			<div class="alignleft">
-				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
-				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
-				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
-				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
-				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
-				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
-			</div>
-
-			<div class="alignleft">
-				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
-			</div>
-
-			<div class="alignleft">
-				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
-			</div>
-		</fieldset>
-
-		<fieldset id="attachment-settings" class="attachment-fieldset">
-			<legend>Attachment Settings</legend>
-
-			<div class="alignleft">
-				<p><label>Align:<br /><input type="text" id="attachment-prop-align" class="regular-text" /></label></p>
-				<p><label>Size:<br /><input type="text" id="attachment-prop-size" class="regular-text" /></label></p>
-				<p><label>Link:<br /><input type="text" id="attachment-prop-link" class="regular-text" /></label></p>
-				<p><label>Link URL:<br /><input type="text" id="attachment-prop-linkUrl" class="regular-text" /></label></p>
-			</div>
-
-			<div class="alignleft">
-				<p><label>RAW Data:<br /><textarea id="attachment-prop-raw" class="code"></textarea></label>
-			</div>
-		</fieldset>
-		<?php
-	}
-
-	/**
-	 * Filters media view strings. Used for the the second demo.
-	 *
-	 * @since 0.2.0
-	 */
-	public static function filter_media_view_strings( $strings ) {
-		$strings[ 'insertMediaTitle' ] = 'Select An Image';
-		$strings[ 'insertIntoPost' ] = 'Select';
-
-		return $strings;
-	}
-
-	/**
-	 * Filters media view settings. Used for the the second demo.
-	 *
-	 * @since 0.2.0
-	 */
-	public static function filter_media_view_settings( $settings ) {
-		$settings[ 'mimeTypes' ] = array( 'image' => $settings[ 'mimeTypes' ][ 'image'] );
-
-		return $settings;
-	}
-
-	/**
-	 * Renders the third demo.
-	 *
-	 * @since 0.2.0
-	 */
-	private static function render_demo_page_three() {
-		?>
-		<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
-
-		<fieldset id="attachment-details" class="attachment-fieldset">
-			<legend>Attachment Details</legend>
-
-			<div class="alignleft">
-				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
-				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
-				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
-				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
-				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
-				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
-			</div>
-
-			<div class="alignleft">
-				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
-			</div>
-
-			<div class="alignleft">
-				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
-			</div>
-		</fieldset>
-		<?php
-	}
-
-	/**
-	 * Renders the fourth and fifth demo.
-	 *
-	 * @since 0.3.0
-	 */
-	private static function render_demo_page_fourth() {
-		?>
-		<p>
-			<input type="button" class="button open-media-button" id="open-media-modal" value="Open Media Library" />
-			<span class="description">Choose one or more images.</span>
-		</p>
-
-		<fieldset id="attachment-details-tmpl" class="attachment-fieldset">
-			<legend>Attachment Details</legend>
-
-			<div class="alignleft">
-				<p><label>ID:<br /><input type="text" id="attachment-id" class="regular-text" /></label></p>
-				<p><label>Title:<br /><input type="text" id="attachment-title" class="regular-text" /></label></p>
-				<p><label>Filename:<br /><input type="text" id="attachment-filename" class="regular-text" /></label></p>
-				<p><label>Height:<br /><input type="text" id="attachment-height" class="regular-text" /></label></p>
-				<p><label>Width:<br /><input type="text" id="attachment-width" class="regular-text" /></label></p>
-				<p><label>URL:<br /><input type="text" id="attachment-url" class="regular-text" /></label></p>
-			</div>
-
-			<div class="alignleft">
-				<p><strong>Image:</strong><br/><img id="attachment-src" /></p>
-			</div>
-
-			<div class="alignleft">
-				<p><label>RAW Data:<br /><textarea id="attachment-raw" class="code"></textarea></label>
-			</div>
-		</fieldset>
-		<?php
-	}
-
-	public static function print_media_templates() {
-	?>
-		<script type="text/html" id="tmpl-hello-world">
-			<strong>Hello World</strong>
-		</script>
-	<?php
 	}
 }
 
-// Please load. Thanks.
-add_action( 'init', array( 'Media_Modal_Demo', 'init' ), 20 );
+// We are now ready for take off
+add_action( 'init', array( Media_Modal_Demo::get_instance(), 'init_plugin' ), 20 );

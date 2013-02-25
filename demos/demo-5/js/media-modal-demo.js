@@ -1,26 +1,29 @@
-var mediaUploaderDemo = mediaUploaderDemo || {};
+var ds = ds || {};
 
 ( function( $ ) {
-	mediaUploaderDemo = {
+	var media;
+
+	ds.media = media = {};
+
+	_.extend( media, { view: {}, controller: {} } );
+
+	media.view.HelloWorld = wp.media.View.extend( {
+		className: 'hello-world-frame',
+		template:  wp.media.template( 'hello-world' ) // <script type="text/html" id="tmpl-hello-world">
+	} );
+
+	media.controller.HelloWorld = wp.media.controller.State.extend( {
+		defaults: {
+			id:       'hello-world-state',
+			menu:     'default',
+			content:  'hello_world_state'
+		}
+	} );
+
+	_.extend( media, {
 		frame: function() {
 			if ( this._frame )
 				return this._frame;
-
-			mediaUploaderDemo.views = {};
-			mediaUploaderDemo.controller = {};
-
-			mediaUploaderDemo.controller.HelloWorld = wp.media.controller.State.extend( {
-				defaults: {
-					id:       'hello-world-state',
-					menu:     'default',
-					content:  'hello_world_state'
-				}
-			} );
-
-			mediaUploaderDemo.views.HelloWorld = wp.media.View.extend( {
-				className: 'hello-world-frame',
-				template:  wp.media.template( 'hello-world' ) // <script type="text/html" id="tmpl-hello-world">
-			} );
 
 			var states = [
 				new wp.media.controller.Library(),
@@ -48,7 +51,7 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 						multiple:           false,
 						contentUserSetting: false // Show the Upload Files tab.
 				} ),
-				new mediaUploaderDemo.controller.HelloWorld( {
+				new media.controller.HelloWorld( {
 					title:    'Hello World',
 					id:       'hello-world-state',
 					priority: 50
@@ -62,12 +65,12 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 			} );
 
 			this._frame.on( 'content:create:hello_world_state', function() {
-				var view = new mediaUploaderDemo.views.HelloWorld( {
-					controller: mediaUploaderDemo.frame(),
-					model:      mediaUploaderDemo.frame().state()
+				var view = new ds.media.view.HelloWorld( {
+					controller: media.frame(),
+					model:      media.frame().state()
 				} );
 
-				mediaUploaderDemo.frame().content.set( view );
+				media.frame().content.set( view );
 			} );
 
 			this._frame.on( 'open', this.open );
@@ -109,7 +112,7 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 				selection = this.get( 'selection' );
 
 			$( '.added' ).remove();
-			selection.map( mediaUploaderDemo.showAttachmentDetails );
+			selection.map( ds.media.showAttachmentDetails );
 		},
 
 		showAttachmentDetails: function( attachment ) {
@@ -137,10 +140,10 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 			$( '#open-media-modal' ).on( 'click', function( e ) {
 				e.preventDefault();
 
-				mediaUploaderDemo.frame().open();
+				media.frame().open();
 			});
 		}
-	};
+	} );
 
-	$( mediaUploaderDemo.init );
+	$( media.init );
 } )( jQuery );
