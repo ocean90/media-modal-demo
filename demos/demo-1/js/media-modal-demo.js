@@ -7,21 +7,20 @@ var ds = ds || {};
 	var media;
 
 	ds.media = media = {
-		button_id: '#open-media-lib',
-		details_container: '#attachment-details',
-		frame: null,
+		buttonId: '#open-media-lib',
+		detailsContainerId: '#attachment-details',
 
 		init: function() {
-			$( this.button_id ).on( 'click', this.openMediaDialog );
+			$( this.buttonId ).on( 'click', this.openMediaDialog );
 		},
 
 		openMediaDialog: function( e ) {
-			if ( this.frame ) {
-				this.frame.open();
+			if ( this._frame ) {
+				this._frame.open();
 				return;
 			}
 
-			this.frame = wp.media.frames.frame = wp.media( {
+			this._frame = wp.media.frames.frame = wp.media( {
 				title: $( this ).data( 'title' ),
 				button: {
 					text: $( this ).data( 'buttonText' )
@@ -32,21 +31,20 @@ var ds = ds || {};
 				}
 			} );
 
-			this.frame.on( 'ready', function() {
+			this._frame.on( 'ready', function() {
 				$( '.media-modal' ).addClass( 'no-sidebar' );
 			} );
 
-			var that = this;
-			this.frame.on( 'select', function() {
-				var attachment = that.frame.state().get( 'selection' ).first();
+			this._frame.state( 'library' ).on( 'select', function() {
+				var attachment = this.get( 'selection' ).single();
 				media.handleMediaAttachment( attachment );
 			} );
 
-			this.frame.open();
+			this._frame.open();
 		},
 
 		handleMediaAttachment: function( attachment ) {
-			var details = $( this.details_container );
+			var details = $( this.detailsContainerId );
 
 			$( 'input', details ).each( function() {
 				var key = $( this ).attr( 'id' ).replace( 'attachment-', '' );

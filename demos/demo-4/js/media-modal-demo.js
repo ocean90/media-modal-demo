@@ -8,6 +8,8 @@ var ds = ds || {};
 
 	ds.media = media = {
 		buttonId: '#open-media-modal',
+		detailsTemplate: '#attachment-details-tmpl',
+
 		frame: function() {
 			if ( this._frame )
 				return this._frame;
@@ -43,7 +45,7 @@ var ds = ds || {};
 		},
 
 		showAttachmentDetails: function( attachment ) {
-			var details_tmpl = $( '#attachment-details-tmpl' ),
+			var details_tmpl = $( media.detailsTemplate ),
 				details = details_tmpl.clone();
 
 			details.addClass( 'added' );

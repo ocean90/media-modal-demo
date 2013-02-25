@@ -117,7 +117,7 @@ var ds = ds || {};
 				selection = this.get( 'selection' );
 
 			$( '.added' ).remove();
-			selection.map( ds.media.showAttachmentDetails );
+			selection.map( media.showAttachmentDetails );
 		},
 
 		showAttachmentDetails: function( attachment ) {

@@ -7,12 +7,12 @@ var ds = ds || {};
 	var media;
 
 	ds.media = media = {
-		button_id: '#open-media-editor',
-		details_container: '#attachment-details',
-		settings_container: '#attachment-settings',
+		buttonId: '#open-media-editor',
+		detailsContainerId: '#attachment-details',
+		settingsContainerId: '#attachment-settings',
 
 		init: function() {
-			$( this.button_id ).on( 'click', this.openMediaDialog );
+			$( media.buttonId ).on( 'click', this.openMediaDialog );
 		},
 
 		openMediaDialog: function( e ) {
@@ -28,7 +28,7 @@ var ds = ds || {};
 			/**
 			 * attachment
 			 */
-			var details = $( media.details_container );
+			var details = $( media.detailsContainerId );
 
 			$( 'input', details ).each( function() {
 				var key = $( this ).attr( 'id' ).replace( 'attachment-', '' );
@@ -43,7 +43,7 @@ var ds = ds || {};
 			/**
 			 * props
 			 */
-			var settings = $( media.settings_container );
+			var settings = $( media.settingsContainerId );
 
 			$( 'input', settings ).each( function() {
 				var key = $( this ).attr( 'id' ).replace( 'attachment-prop-', '' );

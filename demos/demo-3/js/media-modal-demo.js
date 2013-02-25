@@ -8,6 +8,8 @@ var ds = ds || {};
 
 	ds.media = media = {
 		buttonId: '#open-media-modal',
+		detailsContainerId: '#attachment-details',
+
 		frame: function() {
 			if ( this._frame )
 				return this._frame;
@@ -42,7 +44,7 @@ var ds = ds || {};
 		},
 
 		showAttachmentDetails: function( attachment ) {
-			var details = $( '#attachment-details' );
+			var details = $( media.detailsContainerId );
 
 			$( 'input', details ).each( function() {
 				var key = $( this ).attr( 'id' ).replace( 'attachment-', '' );
