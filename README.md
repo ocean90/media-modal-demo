@@ -15,7 +15,8 @@ A sample plugin which will demonstrate different ways on how the new media workf
    * Demos are located in /demos/
    * Each demo has its own class, which extends `Media_Modal_Demo_Page_Abstract`
    * The custom JavaScript stuff is stored into the global var `ds.media`
-   * Docs, a lot of docs
+* Moved demo page menu from settings to plugins
+* Docs, a lot of docs
 
 #### 0.3
 * Added fifth demo
