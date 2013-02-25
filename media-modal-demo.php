@@ -175,7 +175,7 @@ class Media_Modal_Demo {
 	 * Initialises also the hooks of the demo page class.
 	 */
 	private function init_hooks() {
-		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+		add_action( 'admin_menu', array( $this, 'add_plugins_page' ) );
 
 		add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
@@ -184,10 +184,10 @@ class Media_Modal_Demo {
 	}
 
 	/**
-	 * Adds an options pages.
+	 * Adds a menu entry for this plugin.
 	 */
-	public function add_options_page() {
-		$this->screen_id = add_options_page(
+	public function add_plugins_page() {
+		$this->screen_id = add_plugins_page(
 			'Media Modal Demo',
 			'Media Modal Demo',
 			'manage_options',
