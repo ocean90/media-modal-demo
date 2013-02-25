@@ -1,5 +1,8 @@
 var ds = ds || {};
 
+/**
+ * Demo 5
+ */
 ( function( $ ) {
 	var media;
 
@@ -19,6 +22,8 @@ var ds = ds || {};
 			content:  'hello_world_state'
 		}
 	} );
+
+	media.buttonId = '#open-media-modal',
 
 	_.extend( media, {
 		frame: function() {
@@ -137,7 +142,7 @@ var ds = ds || {};
 		},
 
 		init: function() {
-			$( '#open-media-modal' ).on( 'click', function( e ) {
+			$( media.buttonId ).on( 'click', function( e ) {
 				e.preventDefault();
 
 				media.frame().open();

@@ -1,7 +1,13 @@
-var mediaUploaderDemo = mediaUploaderDemo || {};
+var ds = ds || {};
 
+/**
+ * Demo 4
+ */
 ( function( $ ) {
-	mediaUploaderDemo = {
+	var media;
+
+	ds.media = media = {
+		buttonId: '#open-media-modal',
 		frame: function() {
 			if ( this._frame )
 				return this._frame;
@@ -33,7 +39,7 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 				selection = this.get( 'selection' );
 
 			$( '.added' ).remove();
-			selection.map( mediaUploaderDemo.showAttachmentDetails );
+			selection.map( media.showAttachmentDetails );
 		},
 
 		showAttachmentDetails: function( attachment ) {
@@ -58,13 +64,13 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 		},
 
 		init: function() {
-			$( '#open-media-modal' ).on( 'click', function( e ) {
+			$( media.buttonId ).on( 'click', function( e ) {
 				e.preventDefault();
 
-				mediaUploaderDemo.frame().open();
+				media.frame().open();
 			});
 		}
 	};
 
-	$( mediaUploaderDemo.init );
+	$( media.init );
 } )( jQuery );

@@ -1,5 +1,12 @@
+var ds = ds || {};
+
+/**
+ * Demo 1
+ */
 ( function( $ ) {
-	var mediaUploaderDemo = {
+	var media;
+
+	ds.media = media = {
 		button_id: '#open-media-lib',
 		details_container: '#attachment-details',
 		frame: null,
@@ -32,7 +39,7 @@
 			var that = this;
 			this.frame.on( 'select', function() {
 				var attachment = that.frame.state().get( 'selection' ).first();
-				mediaUploaderDemo.handleMediaAttachment( attachment );
+				media.handleMediaAttachment( attachment );
 			} );
 
 			this.frame.open();
@@ -55,6 +62,6 @@
 	};
 
 	$( document ).ready( function() {
-		mediaUploaderDemo.init();
+		media.init();
 	} );
 } )( jQuery );

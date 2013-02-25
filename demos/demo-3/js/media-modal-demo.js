@@ -1,7 +1,13 @@
-var mediaUploaderDemo = mediaUploaderDemo || {};
+var ds = ds || {};
 
+/**
+ * Demo 3
+ */
 ( function( $ ) {
-	mediaUploaderDemo = {
+	var media;
+
+	ds.media = media = {
+		buttonId: '#open-media-modal',
 		frame: function() {
 			if ( this._frame )
 				return this._frame;
@@ -32,8 +38,7 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 			var settings = wp.media.view.settings,
 				selection = this.get( 'selection' ).single();
 
-			mediaUploaderDemo.showAttachmentDetails( selection );
-			this._frame.trigger('destroy');
+			media.showAttachmentDetails( selection );
 		},
 
 		showAttachmentDetails: function( attachment ) {
@@ -51,13 +56,13 @@ var mediaUploaderDemo = mediaUploaderDemo || {};
 		},
 
 		init: function() {
-			$( '#open-media-modal' ).on( 'click', function( e ) {
+			$( media.buttonId ).on( 'click', function( e ) {
 				e.preventDefault();
 
-				mediaUploaderDemo.frame().open();
+				media.frame().open();
 			});
 		}
 	};
 
-	$( mediaUploaderDemo.init );
+	$( media.init );
 } )( jQuery );
