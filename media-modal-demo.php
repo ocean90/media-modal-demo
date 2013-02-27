@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Media Modal Demo
- * Version: 1.0
+ * Version: 1.0-beta
  * Description: Adds an options page, where the new Media Modal can be used to get attachment details
  * Author: Dominik Schilling
  * Author URI: http://wphelper.de/
