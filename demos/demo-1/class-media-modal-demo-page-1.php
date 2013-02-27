@@ -19,7 +19,11 @@ class Media_Modal_Demo_Page_1 extends Media_Modal_Demo_Page_Abstract {
 	 */
 	public function print_description() {
 		?>
-		<p>Hello</p>
+		<p>This demo shows a simple media frame without a sidebar.</p>
+		<p>
+			The frame queries only images. You can select only one image at once.<br />
+			When the button "Select" is clicked the frame closes and you get the details of the selected image.
+		</p>
 		<?php
 	}
 
