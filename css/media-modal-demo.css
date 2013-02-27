@@ -6,6 +6,29 @@
 	margin: 10px;
 }
 
+#media-modal-demo h3 {
+	margin-bottom: 0;
+}
+
+#media-modal-demo .nav-tab-active {
+	background: #f1f1f1;
+	border-bottom-color: #f1f1f1;
+}
+
+#media-modal-demo-description {
+	background: #f1f1f1;
+	border-color: #ccc;
+	margin: 0;
+	border-width: 0 1px 1px;
+	border-style: none solid solid;
+	padding: 10px 15px;
+	border-radius: 0 0 3px 3px;
+}
+
+#media-modal-demo-description p {
+	margin-top: 0;
+}
+
 .attachment-fieldset {
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
@@ -21,6 +44,10 @@
 	font-weight: 700;
 }
 
+.attachment-fieldset .regular-text {
+	width: 97%;
+}
+
 .attachment-fieldset input,
 .attachment-fieldset textarea {
 	font-weight: normal;
@@ -29,6 +56,10 @@
 .attachment-fieldset textarea {
 	width: 100%;
 	height: 300px;
+}
+
+.attachment-fieldset img {
+	max-width: 97%;
 }
 
 #attachment-details-tmpl {
